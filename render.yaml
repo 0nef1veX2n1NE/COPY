@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: chord-trace
+    runtime: docker
+    plan: 1c-2g
+    region: singapore
+    numInstances: 1
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    autoDeployTrigger: checksPass
+    maxShutdownDelaySeconds: 120
+    envVars:
+      - key: CHORD_CHECKPOINT
+        value: /app/models/btc_model.pt
+      - key: CHORD_PROFILE
+        value: btc-ismir19-25
+      - key: CHORD_DEVICE
+        value: cpu
+      - key: CHORD_CACHE_DIR
+        value: /tmp/chord-cache
+      - key: CHORD_WORK_DIR
+        value: /tmp/chord-jobs
+      - key: CHORD_BATCH_SIZE
+        value: "8"
+      - key: MAX_UPLOAD_MB
+        value: "30"
+      - key: MAX_PENDING_JOBS
+        value: "2"
+      - key: JOB_TTL_SECONDS
+        value: "3600"
+      - key: TORCH_NUM_THREADS
+        value: "2"
+      - key: OMP_NUM_THREADS
+        value: "2"
+      - key: MKL_NUM_THREADS
+        value: "2"

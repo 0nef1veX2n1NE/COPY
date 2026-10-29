@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+cache/
+outputs/
+runs/
+models/*.pt
+.env
+.coverage
+tmp/

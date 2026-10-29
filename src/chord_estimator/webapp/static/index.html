@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MP3에서 시간별 코드 진행을 추정하는 Chord Trace">
+  <title>Chord Trace — Audio Chord Map</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Chord Trace 홈">
+      <span class="brand-mark">CT</span>
+      <span>CHORD//TRACE</span>
+    </a>
+    <div class="system-status" id="systemStatus"><span class="pulse"></span>MODEL CHECK</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">MUSIC INFORMATION RETRIEVAL / BTC-ISMIR19</p>
+        <h1>소리를<br><span>화성의 지도</span>로.</h1>
+        <p class="lede">보컬, 드럼, 베이스가 섞인 음원에서 시간별 코드 심볼과 후보, 불확실성을 추정합니다.</p>
+        <dl class="model-spec">
+          <div><dt>INPUT</dt><dd>MP3 · WAV</dd></div>
+          <div><dt>VOCAB</dt><dd>24 CHORDS + N</dd></div>
+          <div><dt>OUTPUT</dt><dd>JSON · CSV · LAB</dd></div>
+        </dl>
+      </div>
+
+      <div class="upload-console" id="uploadConsole">
+        <div class="console-bar"><span>NEW ANALYSIS</span><span id="limitText">MAX — MB</span></div>
+        <form id="uploadForm">
+          <label class="drop-zone" id="dropZone" for="audioFile">
+            <input id="audioFile" name="file" type="file" accept=".mp3,.wav,audio/mpeg,audio/wav" required>
+            <span class="upload-icon" aria-hidden="true">↥</span>
+            <strong id="dropTitle">오디오 파일을 놓으세요</strong>
+            <span id="fileMeta">또는 클릭해 MP3/WAV 선택</span>
+          </label>
+          <button class="primary-button" id="analyzeButton" type="submit" disabled>
+            <span>코드 맵 생성</span><span aria-hidden="true">→</span>
+          </button>
+        </form>
+        <div class="progress-panel" id="progressPanel" hidden>
+          <div class="progress-row"><span id="progressStage">대기 중</span><span id="progressValue">0%</span></div>
+          <div class="progress-track"><span id="progressBar"></span></div>
+          <p>창을 닫지 마세요. 현재 서버는 한 곡씩 분석합니다.</p>
+        </div>
+        <p class="privacy-note">업로드 파일과 결과는 임시 저장되며 기본 1시간 후 삭제됩니다.</p>
+      </div>
+    </section>
+
+    <section class="result-section" id="resultSection" hidden aria-live="polite">
+      <div class="section-heading">
+        <div><p class="eyebrow">ANALYSIS COMPLETE</p><h2 id="resultTitle">Chord map</h2></div>
+        <button class="ghost-button" id="newAnalysis" type="button">새 파일 분석</button>
+      </div>
+
+      <div class="summary-grid">
+        <article><span>DURATION</span><strong id="durationMetric">—</strong></article>
+        <article><span>SEGMENTS</span><strong id="segmentMetric">—</strong></article>
+        <article><span>FRAMES</span><strong id="frameMetric">—</strong></article>
+        <article><span>INFERENCE</span><strong id="inferenceMetric">—</strong></article>
+      </div>
+
+      <div class="player-card">
+        <div class="player-label"><span>SOURCE MONITOR</span><span id="nowChord">—</span></div>
+        <audio id="audioPlayer" controls preload="metadata"></audio>
+      </div>
+
+      <div class="timeline-card">
+        <div class="card-heading">
+          <div><span>CHORD TIMELINE</span><small>구간을 누르면 해당 시각으로 이동합니다</small></div>
+          <div class="legend"><span><i class="major"></i>MAJOR</span><span><i class="minor"></i>MINOR</span><span><i class="unknown"></i>N / UNKNOWN</span></div>
+        </div>
+        <div class="timeline" id="timeline" role="list" aria-label="코드 타임라인"></div>
+        <div class="timeline-axis"><span>0:00</span><span id="axisEnd">—</span></div>
+      </div>
+
+      <div class="result-toolbar">
+        <div>
+          <h3>구간별 추정</h3>
+          <p>Score는 보정되지 않은 softmax 값이며 정답 확률이 아닙니다.</p>
+        </div>
+        <div class="downloads" id="downloads"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>TIME</th><th>CHORD</th><th>TOP CANDIDATES</th><th>SCORE</th><th>UNCERTAINTY</th></tr></thead>
+          <tbody id="segmentRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="scope-note">
+      <span class="scope-index">01</span>
+      <div><h2>코드명과 기타 운지는 다릅니다.</h2><p>이 서비스는 곡의 화성 코드 심볼을 추정합니다. 실제 기타 프렛, 보이싱, 운지, 카포 위치는 복원하지 않습니다.</p></div>
+    </section>
+  </main>
+
+  <footer><span>CHORD//TRACE</span><span>LOG-CQT · BIDIRECTIONAL TRANSFORMER · PYTORCH</span></footer>
+  <div class="toast" id="toast" role="alert" hidden></div>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
+

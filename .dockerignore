@@ -1,0 +1,14 @@
+.git
+.github
+.pytest_cache
+__pycache__
+*.py[cod]
+.venv
+cache
+outputs
+runs
+tests
+models/*.pt
+.env
+*.mp3
+*.wav

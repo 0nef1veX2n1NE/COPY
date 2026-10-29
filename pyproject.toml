@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mir-chord-estimator"
+version = "0.2.0"
+description = "Checkpoint-gated log-CQT Transformer chord estimation"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = {text = "MIT"}
+dependencies = ["numpy>=1.26", "scipy>=1.11", "torch>=2.2", "librosa>=0.10.2", "soundfile>=0.12", "PyYAML>=6.0", "psutil>=5.9"]
+
+[project.optional-dependencies]
+eval = ["mir_eval>=0.7"]
+test = ["pytest>=8.0"]
+web = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.30,<1", "python-multipart>=0.0.18,<1"]
+
+[project.scripts]
+chord-estimator = "chord_estimator.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"chord_estimator.webapp" = ["static/*.html", "static/*.css", "static/*.js"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
